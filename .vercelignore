@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# Node modules (não usado neste projeto)
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Arquivos temporários
+*.tmp
+.cache
+dist
+build
+
+# Readme e documentação (não precisa servir)
+# README.md é util mas deixar comentado se não quiser
