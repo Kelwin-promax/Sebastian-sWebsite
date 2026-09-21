@@ -34,14 +34,14 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
-            padding: 0 60px;
+            padding: 0 40px;
         }
 
         .hero .container {
             max-width: 100%;
-            padding: 0;
+            padding: 0 40px;
         }
 
         /* Material Icons */
@@ -71,16 +71,21 @@
         }
 
         .logo {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            letter-spacing: -0.5px;
+            letter-spacing: 0px;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.7rem;
+        }
+
+        .logo strong {
+            color: var(--accent);
+            font-weight: 800;
         }
 
         .logo .material-icons {
-            font-size: 26px;
+            font-size: 24px;
             color: var(--accent);
         }
 
@@ -126,27 +131,30 @@
         /* Hero */
         .hero {
             margin-top: 80px;
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 80px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
             align-items: center !important;
-            padding: 120px 60px 100px !important;
-            max-width: 1400px !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+            padding: 140px 40px 100px !important;
+            text-align: center !important;
         }
 
         .hero-container {
-            display: contents !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            width: 100% !important;
+            max-width: 900px !important;
         }
 
         .hero-content {
-            text-align: left;
-            grid-column: 1;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 4rem;
         }
 
         .hero-demo {
-            grid-column: 2;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -155,23 +163,30 @@
         .hero-demo .demo {
             max-width: 100%;
             width: 100%;
-            height: 400px;
+            max-width: 700px;
+            height: 380px;
         }
 
         h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            line-height: 1.15;
-            letter-spacing: -1px;
+            font-size: 4.2rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .subtitle {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             color: var(--text-muted);
-            margin-bottom: 3rem;
-            line-height: 1.9;
-            max-width: 500px;
+            margin-bottom: 3.5rem;
+            line-height: 1.8;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .hero-buttons {
@@ -278,25 +293,27 @@
 
         /* Sections */
         section {
-            padding: 100px 60px;
+            padding: 100px 40px;
             border-top: 1px solid var(--border);
         }
 
         h2 {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 800;
-            margin-bottom: 1.2rem;
-            text-align: left;
+            margin-bottom: 1.5rem;
+            text-align: center;
             letter-spacing: -1px;
         }
 
         .section-subtitle {
-            text-align: left;
+            text-align: center;
             color: var(--text-muted);
             margin-bottom: 5rem;
-            font-size: 1.05rem;
-            max-width: 600px;
+            font-size: 1.1rem;
+            max-width: 700px;
             line-height: 1.8;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Features Grid */
@@ -305,6 +322,9 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 2.5rem;
             margin-bottom: 2rem;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .feature-card {
@@ -601,7 +621,7 @@
         <div class="container">
             <div class="logo">
                 <span class="material-icons">terminal</span>
-                sebastian
+                <strong>Project-Sebas</strong>
             </div>
             <nav>
                 <a href="#features">features</a>
@@ -619,8 +639,8 @@
     <!-- Hero -->
     <section class="hero hero-container">
             <div class="hero-content">
-                <h1>Terminal AI Assistant</h1>
-                <p class="subtitle">Install in 2 minutes. Choose between local privacy or cloud performance. No manual configuration.</p>
+                <h1>Project-Sebas</h1>
+                <p class="subtitle">Terminal AI Assistant with Tool Calling. Run locally with Ollama (privacy) or cloud with Claude (performance). Install in 2 minutes.</p>
 
                 <div class="hero-buttons">
                     <button class="btn-primary">
