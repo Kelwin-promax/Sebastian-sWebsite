@@ -35,6 +35,22 @@
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        #acid-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            display: none;
+        }
+
+        body.show-acid #acid-canvas {
+            display: block;
         }
 
         header {
@@ -405,7 +421,9 @@
         }
     </style>
 </head>
-<body>
+<body class="show-acid">
+    <canvas id="acid-canvas"></canvas>
+
     <header>
         <div class="header-container">
             <div class="logo">
@@ -533,5 +551,140 @@ Você: o que tem na pasta?
             <p>&copy; 2026 Project-Sebas. Open source, MIT licensed.</p>
         </div>
     </footer>
+
+    <script>
+        class AcidSquares {
+            constructor() {
+                this.canvas = document.getElementById('acid-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+
+                this.particles = [];
+                this.time = 0;
+                this.mouse = { x: this.width / 2, y: this.height / 2 };
+
+                this.colors = ['#c4b6ff', '#555ef7', '#00d4ff', '#7c3aed'];
+                this.gridSize = 60;
+                this.speed = 0.7;
+                this.glow = 1;
+
+                this.init();
+                this.setupEventListeners();
+                this.animate();
+            }
+
+            init() {
+                for (let x = -this.gridSize; x < this.width + this.gridSize; x += this.gridSize) {
+                    for (let y = -this.gridSize; y < this.height + this.gridSize; y += this.gridSize) {
+                        this.particles.push({
+                            x: x,
+                            y: y,
+                            baseX: x,
+                            baseY: y,
+                            vx: 0,
+                            vy: 0,
+                            size: Math.random() * 30 + 20
+                        });
+                    }
+                }
+            }
+
+            setupEventListeners() {
+                document.addEventListener('mousemove', (e) => {
+                    this.mouse.x = e.clientX;
+                    this.mouse.y = e.clientY;
+                });
+
+                window.addEventListener('resize', () => {
+                    this.width = window.innerWidth;
+                    this.height = window.innerHeight;
+                    this.canvas.width = this.width;
+                    this.canvas.height = this.height;
+                });
+            }
+
+            update() {
+                this.time += this.speed * 0.01;
+
+                this.particles.forEach((p, i) => {
+                    const wave1 = Math.sin(this.time + p.baseX * 0.005) * 20;
+                    const wave2 = Math.cos(this.time * 0.7 + p.baseY * 0.005) * 20;
+
+                    const dx = this.mouse.x - p.baseX;
+                    const dy = this.mouse.y - p.baseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const mouseInfluence = Math.max(0, 1 - dist / 300);
+
+                    p.x = p.baseX + wave1 + dx * mouseInfluence * 0.1;
+                    p.y = p.baseY + wave2 + dy * mouseInfluence * 0.1;
+                });
+            }
+
+            draw() {
+                this.ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+
+                this.particles.forEach((p, i) => {
+                    const hue = (this.time * 30 + i * 2) % 360;
+                    const colorIndex = Math.floor((hue / 360) * this.colors.length);
+                    const color = this.colors[colorIndex];
+
+                    const alpha = Math.sin(this.time + i * 0.1) * 0.3 + 0.4;
+
+                    this.ctx.fillStyle = this.hexToRgba(color, alpha);
+                    this.ctx.shadowColor = color;
+                    this.ctx.shadowBlur = 20 * this.glow;
+
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+                    this.ctx.fill();
+
+                    if (Math.random() > 0.95) {
+                        this.drawSquare(p.x, p.y, p.size);
+                    }
+                });
+
+                this.ctx.shadowColor = 'transparent';
+            }
+
+            drawSquare(x, y, size) {
+                const rotation = this.time * 0.5;
+                this.ctx.save();
+                this.ctx.translate(x, y);
+                this.ctx.rotate(rotation);
+
+                const s = size / 2;
+                this.ctx.strokeStyle = 'rgba(85, 94, 247, 0.6)';
+                this.ctx.lineWidth = 2;
+                this.ctx.strokeRect(-s, -s, s * 2, s * 2);
+
+                this.ctx.restore();
+            }
+
+            hexToRgba(hex, alpha) {
+                const r = parseInt(hex.slice(1, 3), 16);
+                const g = parseInt(hex.slice(3, 5), 16);
+                const b = parseInt(hex.slice(5, 7), 16);
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+            animate() {
+                this.update();
+                this.draw();
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                new AcidSquares();
+            });
+        } else {
+            new AcidSquares();
+        }
+    </script>
 </body>
 </html>
