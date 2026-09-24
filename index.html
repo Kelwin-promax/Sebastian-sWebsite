@@ -1,854 +1,118 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project-Sebas - Terminal AI Assistant</title>
-    <meta name="description" content="Run AI in your terminal. Local privacy with Ollama or cloud performance with Claude. Open source.">
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Sebastian</title>
+    <meta name="description" content="Terminal AI Assistant. Install in 2 minutes. Choose privacy or performance.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #ffffff;
-            --bg-secondary: #f8f8f8;
-            --bg-dark: #0a0a0a;
-            --text: #1a1a1a;
-            --text-light: #ffffff;
-            --text-muted: #666666;
-            --accent: #0ea5e9;
-            --accent-dark: #0284c7;
-            --border: #e5e7eb;
-            --success: #10b981;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        /* Header */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 1.2rem 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--text);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-
-        .logo-accent {
-            color: var(--accent);
-        }
-
-        nav {
-            display: flex;
-            gap: 2.5rem;
-            align-items: center;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-
-        nav a:hover {
-            color: var(--text);
-        }
-
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-dark);
-            transform: translateY(-1px);
-        }
-
-        /* Hero */
-        .hero {
-            margin-top: 70px;
-            min-height: 90vh;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-            padding: 100px 40px;
-            max-width: 1400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-text h1 {
-            font-size: 5rem;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-        }
-
-        .hero-text h1 .highlight {
-            color: var(--accent);
-        }
-
-        .hero-text p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            margin-bottom: 2.5rem;
-            line-height: 1.8;
-            max-width: 500px;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1.2rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--text);
-            padding: 0.75rem 2rem;
-            border: 2px solid var(--border);
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--text);
-            background: var(--bg-secondary);
-        }
-
-        .hero-visual {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
-        }
-
-        .terminal-demo {
-            width: 100%;
-            max-width: 550px;
-            height: 500px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 0.8rem;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            transform: rotateX(5deg);
-        }
-
-        .terminal-header {
-            background: #1a1a1a;
-            padding: 1rem;
-            border-bottom: 1px solid #333;
-            display: flex;
-            gap: 0.6rem;
-            align-items: center;
-        }
-
-        .terminal-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .dot-1 { background: #ff5f56; }
-        .dot-2 { background: #ffbd2e; }
-        .dot-3 { background: #27c93f; }
-
-        .terminal-content {
-            padding: 1.5rem;
-            font-family: 'Geist Mono', monospace;
-            font-size: 0.85rem;
-            color: #10b981;
-            line-height: 1.8;
-            overflow-y: auto;
-            flex: 1;
-            background: #0a0a0a;
-        }
-
-        .terminal-content code {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
-
-        .command { color: #818cf8; }
-        .output { color: #10b981; }
-        .prompt { color: #818cf8; }
-
-        /* Features Grid */
-        .features {
-            background: var(--bg-secondary);
-            padding: 120px 40px;
-        }
-
-        .section-container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-header h2 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 1rem;
-            color: var(--text);
-        }
-
-        .section-header p {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 0.8rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.1);
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-        }
-
-        .feature-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-
-        /* How It Works */
-        .how-it-works {
-            padding: 120px 40px;
-            background: white;
-        }
-
-        .steps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 3rem;
-            margin-top: 80px;
-        }
-
-        .step {
-            position: relative;
-        }
-
-        .step-number {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--accent);
-            margin-bottom: 1rem;
-            line-height: 1;
-        }
-
-        .step h3 {
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .step p {
-            color: var(--text-muted);
-            line-height: 1.7;
-        }
-
-        /* Models Section */
-        .models {
-            background: var(--bg-secondary);
-            padding: 120px 40px;
-        }
-
-        .models-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin-top: 80px;
-        }
-
-        .model-card {
-            background: white;
-            padding: 3rem;
-            border-radius: 0.8rem;
-            border: 2px solid var(--border);
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .model-card.featured {
-            border-color: var(--accent);
-            transform: scale(1.05);
-            box-shadow: 0 20px 50px rgba(14, 165, 233, 0.15);
-        }
-
-        .model-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            font-weight: 800;
-            color: var(--text);
-        }
-
-        .model-card p {
-            color: var(--text-muted);
-            margin-bottom: 2rem;
-            line-height: 1.7;
-        }
-
-        .model-features {
-            list-style: none;
-            margin-bottom: 2rem;
-            text-align: left;
-        }
-
-        .model-features li {
-            padding: 0.8rem 0;
-            border-bottom: 1px solid var(--border);
-            color: var(--text-muted);
-        }
-
-        .model-features li:last-child {
-            border-bottom: none;
-        }
-
-        .model-features li::before {
-            content: "✓ ";
-            color: var(--success);
-            font-weight: 700;
-            margin-right: 0.8rem;
-        }
-
-        /* Security */
-        .security {
-            padding: 120px 40px;
-            background: white;
-        }
-
-        .security-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 80px;
-            align-items: center;
-        }
-
-        .security-text h2 {
-            font-size: 2.8rem;
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-            line-height: 1.2;
-        }
-
-        .security-text p {
-            font-size: 1.05rem;
-            color: var(--text-muted);
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-        }
-
-        .security-features {
-            list-style: none;
-            margin-top: 2rem;
-        }
-
-        .security-features li {
-            padding: 1rem 0;
-            padding-left: 2.5rem;
-            position: relative;
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        .security-features li::before {
-            content: "🛡️";
-            position: absolute;
-            left: 0;
-            font-size: 1.3rem;
-        }
-
-        .security-visual {
-            background: var(--bg-secondary);
-            border-radius: 0.8rem;
-            padding: 3rem;
-            text-align: center;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid var(--success);
-        }
-
-        .security-visual-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-        }
-
-        .security-visual p {
-            font-size: 1.1rem;
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        /* CTA Section */
-        .cta {
-            background: var(--bg-dark);
-            color: var(--text-light);
-            padding: 100px 40px;
-            text-align: center;
-        }
-
-        .cta h2 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-
-        .cta p {
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
-            color: #aaa;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta-buttons {
-            display: flex;
-            gap: 1.2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-cta-primary {
-            background: var(--accent);
-            color: white;
-            padding: 1rem 2.5rem;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .btn-cta-primary:hover {
-            background: var(--accent-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-cta-secondary {
-            background: transparent;
-            color: white;
-            padding: 1rem 2.5rem;
-            border: 2px solid white;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.2s;
-        }
-
-        .btn-cta-secondary:hover {
-            background: white;
-            color: var(--text);
-        }
-
-        /* Footer */
-        footer {
-            background: #0a0a0a;
-            color: #aaa;
-            padding: 60px 40px 30px;
-            border-top: 1px solid #222;
-        }
-
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-section h4 {
-            color: white;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-        }
-
-        .footer-section a {
-            display: block;
-            color: #aaa;
-            text-decoration: none;
-            margin-bottom: 0.8rem;
-            transition: color 0.2s;
-            font-size: 0.95rem;
-        }
-
-        .footer-section a:hover {
-            color: var(--accent);
-        }
-
-        .footer-bottom {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid #222;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        @media (max-width: 768px) {
-            .hero, .security-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-
-            .hero-text h1 {
-                font-size: 3.5rem;
-            }
-
-            .section-header h2 {
-                font-size: 2.5rem;
-            }
-
-            nav {
-                gap: 1rem;
-                flex-wrap: wrap;
-            }
-
-            .hero {
-                margin-top: 80px;
-            }
-
-            .model-card.featured {
-                transform: scale(1);
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg: #0a0a0a; --bg-light: #121212; --text: #ffffff; --text-muted: #999999; --accent: #06b6d4; --border: #1a1a1a; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+        .hero .container { max-width: 100%; padding: 0; }
+        .material-icons { vertical-align: middle; user-select: none; }
+        header { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 1.5rem 0; }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.8px; display: flex; align-items: center; gap: 0.5rem; }
+        .logo .material-icons { font-size: 28px; color: var(--accent); }
+        nav { display: flex; gap: 3rem; align-items: center; }
+        nav a { color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+        nav a:hover { color: var(--text); }
+        .nav-btn { background: var(--accent); color: var(--bg); padding: 0.6rem 1.5rem; border: none; border-radius: 0.4rem; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: opacity 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+        .nav-btn:hover { opacity: 0.9; }
+        .hero { margin-top: 80px; display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 60px !important; align-items: center !important; padding: 100px 40px 80px !important; max-width: 1400px !important; margin-left: auto !important; margin-right: auto !important; }
+        .hero-container { display: contents !important; }
+        .hero-content { text-align: left; grid-column: 1; }
+        .hero-demo { grid-column: 2; display: flex; justify-content: center; align-items: center; }
+        h1 { font-size: 4rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; letter-spacing: -2px; }
+        .subtitle { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; line-height: 1.8; }
+        .btn-primary { background: var(--accent); color: var(--bg); padding: 1rem 2rem; border: none; border-radius: 0.4rem; cursor: pointer; font-weight: 600; font-size: 1rem; transition: opacity 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 1rem 2rem; border-radius: 0.4rem; cursor: pointer; font-weight: 600; font-size: 1rem; transition: border-color 0.2s, color 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-secondary:hover { border-color: var(--text); }
+        .demo { background: var(--bg-light); border: 1px solid var(--border); border-radius: 0.6rem; overflow: hidden; max-width: 100%; height: 400px; display: flex; flex-direction: column; }
+        .demo-header { background: var(--bg-light); padding: 1rem; border-bottom: 1px solid var(--border); display: flex; gap: 0.5rem; align-items: center; }
+        .demo-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .demo-dot:nth-child(1) { background: #ef4444; }
+        .demo-dot:nth-child(2) { background: #eab308; }
+        .demo-dot:nth-child(3) { background: #22c55e; }
+        .demo-content { padding: 2rem; font-family: 'Monaco', 'Courier New', monospace; font-size: 0.9rem; color: #888888; line-height: 1.8; overflow-y: auto; flex: 1; }
+        section { padding: 80px 0; border-top: 1px solid var(--border); }
+        h2 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; text-align: left; letter-spacing: -1.5px; }
+        .section-subtitle { text-align: left; color: var(--text-muted); margin-bottom: 4rem; font-size: 1.1rem; max-width: 600px; }
+        .download-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 3rem; }
+        .download-card { background: var(--bg-light); border: 1px solid var(--border); border-radius: 0.6rem; padding: 2.5rem; text-align: center; transition: border-color 0.2s; }
+        .download-card:hover { border-color: var(--text-muted); }
+        .download-card h3 { margin-bottom: 0.5rem; font-weight: 700; }
+        .download-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        footer { background: var(--bg-light); border-top: 1px solid var(--border); padding: 4rem 0; margin-top: 5rem; }
+        @media (max-width: 768px) { .container { padding: 0 20px; } h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } nav { display: none; } .download-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="header-container">
-            <a href="#" class="logo">
-                ▲ <span>Project<span class="logo-accent">Sebas</span></span>
-            </a>
-            <nav>
-                <a href="#features">Features</a>
-                <a href="#how">How It Works</a>
-                <a href="#security">Security</a>
-                <a href="https://github.com/escort-inroad/Project-Sebas">Docs</a>
-                <button class="btn-primary">Get Started</button>
-            </nav>
-        </div>
-    </header>
+    <!-- Download Section with Desktop App -->
+    <section id="download">
+        <div class="container">
+            <h2>Get Started</h2>
+            <p class="section-subtitle">Choose your version</p>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="hero-text">
-            <h1>AI in Your <span class="highlight">Terminal</span></h1>
-            <p>Run powerful AI locally for complete privacy, or switch to Claude for maximum performance. All from your command line. Open source.</p>
-            <div class="hero-buttons">
-                <button class="btn-primary">Install Now</button>
-                <button class="btn-secondary">View on GitHub</button>
+            <!-- Desktop App -->
+            <div style="margin-bottom: 4rem;">
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="material-icons" style="color: var(--accent);">window</span>
+                        Desktop App (Recommended)
+                    </h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Beautiful UI with 4 AI options, chat history, and settings</p>
+                </div>
+
+                <div class="download-grid">
+                    <div class="download-card">
+                        <span class="material-icons" style="font-size: 48px; color: var(--accent); display: block; margin-bottom: 1rem;">computer</span>
+                        <h3>Windows</h3>
+                        <p>Project-Sebas.exe (Windows 10+)</p>
+                        <a href="https://github.com/Kelwin-promax/Project-Sebas/releases/latest" target="_blank" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; margin-top: 1rem; text-decoration: none;">
+                            <span class="material-icons">download</span>
+                            Download
+                        </a>
+                    </div>
+                    <div class="download-card">
+                        <span class="material-icons" style="font-size: 48px; color: var(--accent); display: block; margin-bottom: 1rem;">apple</span>
+                        <h3>macOS</h3>
+                        <p>Project-Sebas.dmg (macOS 11+)</p>
+                        <a href="https://github.com/Kelwin-promax/Project-Sebas/releases/latest" target="_blank" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; margin-top: 1rem; text-decoration: none;">
+                            <span class="material-icons">download</span>
+                            Download
+                        </a>
+                    </div>
+                    <div class="download-card">
+                        <span class="material-icons" style="font-size: 48px; color: var(--accent); display: block; margin-bottom: 1rem;">terminal</span>
+                        <h3>Linux</h3>
+                        <p>Project-Sebas.AppImage (Ubuntu 20.04+)</p>
+                        <a href="https://github.com/Kelwin-promax/Project-Sebas/releases/latest" target="_blank" class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; margin-top: 1rem; text-decoration: none;">
+                            <span class="material-icons">download</span>
+                            Download
+                        </a>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="hero-visual">
-            <div class="terminal-demo">
-                <div class="terminal-header">
-                    <div class="terminal-dot dot-1"></div>
-                    <div class="terminal-dot dot-2"></div>
-                    <div class="terminal-dot dot-3"></div>
-                </div>
-                <div class="terminal-content">
-                    <code><span class="prompt">$</span> python sebastian.py</code>
-                    <code></code>
-                    <code><span class="output">sebastian@localhost ▶︎ Ready</span></code>
-                    <code></code>
-                    <code><span class="prompt">Você:</span> o que tem na pasta de projetos?</code>
-                    <code><span class="output">  [list_files] path='./projects'</span></code>
-                    <code></code>
-                    <code><span class="output">✓ Found 23 files and 4 directories</span></code>
-                    <code><span class="output">  → app/</span></code>
-                    <code><span class="output">  → utils/</span></code>
-                    <code><span class="output">  → docs/</span></code>
-                </div>
+
+            <!-- VS Code Extension -->
+            <div style="background: var(--bg-light); border: 1px solid var(--border); border-radius: 0.6rem; padding: 3rem; text-align: center; margin-top: 3rem;">
+                <h3 style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span class="material-icons" style="color: var(--accent);">extension</span>
+                    VS Code Extension
+                </h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Use all 4 AIs directly in VS Code</p>
+                <a href="https://marketplace.visualstudio.com/items?itemName=ProjectSebas.project-sebas" target="_blank" class="btn-primary" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; text-decoration: none;">
+                    <span class="material-icons">download</span>
+                    Install from Marketplace
+                </a>
             </div>
         </div>
     </section>
-
-    <!-- Features -->
-    <section class="features" id="features">
-        <div class="section-container">
-            <div class="section-header">
-                <h2>Powerful & Safe</h2>
-                <p>Everything you need for intelligent terminal assistance with built-in safety.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Read-Only by Design</h3>
-                    <p>No write, delete, or execute operations. Complete safety guarantee built into the architecture.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🖥️</div>
-                    <h3>Run Locally</h3>
-                    <p>Full privacy with Ollama. Your data never leaves your machine. Perfect for sensitive work.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Or Go Cloud</h3>
-                    <p>Switch to Claude API for enterprise-grade performance. Automatic fallback when Ollama isn't available.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📂</div>
-                    <h3>File Management</h3>
-                    <p>Read files, list directories, search content. All sandbox-restricted and fully auditable.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌐</div>
-                    <h3>Web Search</h3>
-                    <p>Real-time search with Tavily. Get current information from the internet instantly.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Full Logging</h3>
-                    <p>Every action logged to JSON. Complete audit trail for compliance and debugging.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="how-it-works" id="how">
-        <div class="section-container">
-            <div class="section-header">
-                <h2>Get Started in 3 Steps</h2>
-                <p>Installation takes less than 2 minutes. No complex configuration.</p>
-            </div>
-            <div class="steps-grid">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Install</h3>
-                    <p>Run a single command. Automatic detection of Python, Git, and dependencies. Works on Windows, macOS, and Linux.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Configure</h3>
-                    <p>Optional: Add your Tavily API key for web search, or Anthropic API key for Claude. Both are free to start.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Run</h3>
-                    <p>Type natural language. Ask questions, search files, browse the web. It just works.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Models -->
-    <section class="models">
-        <div class="section-container">
-            <div class="section-header">
-                <h2>Choose Your AI</h2>
-                <p>Start local and private, or switch to cloud performance. Your choice.</p>
-            </div>
-            <div class="models-grid">
-                <div class="model-card">
-                    <h3>🖥️ Ollama</h3>
-                    <p>Local, Private & Free</p>
-                    <ul class="model-features">
-                        <li>100% offline - zero cloud requests</li>
-                        <li>No API keys required</li>
-                        <li>Complete data privacy</li>
-                        <li>Perfect for sensitive projects</li>
-                    </ul>
-                    <button class="btn-primary">Download Ollama</button>
-                </div>
-                <div class="model-card featured">
-                    <h3>☁️ Claude</h3>
-                    <p>Cloud Power & Reliability</p>
-                    <ul class="model-features">
-                        <li>Enterprise-grade performance</li>
-                        <li>Latest Claude models</li>
-                        <li>Automatic fast fallback</li>
-                        <li>Best for production use</li>
-                    </ul>
-                    <button class="btn-primary">Get API Key</button>
-                </div>
-                <div class="model-card">
-                    <h3>🔄 Hybrid</h3>
-                    <p>Best of Both Worlds</p>
-                    <ul class="model-features">
-                        <li>Try Ollama first (free)</li>
-                        <li>Fall back to Claude if needed</li>
-                        <li>Cost-optimized approach</li>
-                        <li>Maximum flexibility</li>
-                    </ul>
-                    <button class="btn-secondary">Learn More</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Security -->
-    <section class="security" id="security">
-        <div class="section-container">
-            <div class="security-content">
-                <div class="security-text">
-                    <h2>Privacy & Security Built In</h2>
-                    <p>We take security seriously. That's why Sebastian is read-only by architecture, not by policy.</p>
-                    <ul class="security-features">
-                        <li>No write operations allowed - guaranteed by code design</li>
-                        <li>No delete operations - files always safe</li>
-                        <li>No code execution - terminal stays protected</li>
-                        <li>Sandboxed file access - only allowed directories</li>
-                        <li>Complete audit trail - every action logged</li>
-                        <li>Open source - inspect the code yourself</li>
-                    </ul>
-                </div>
-                <div class="security-visual">
-                    <div class="security-visual-icon">🛡️</div>
-                    <p>Read-Only by Design</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="cta">
-        <div class="section-container">
-            <h2>Ready to Run AI in Your Terminal?</h2>
-            <p>Join developers who trust Sebastian for their AI-powered workflow. No credit card required.</p>
-            <div class="cta-buttons">
-                <button class="btn-cta-primary">Download Now</button>
-                <button class="btn-cta-secondary">View on GitHub</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>Product</h4>
-                <a href="#">Features</a>
-                <a href="#">Security</a>
-                <a href="#">Pricing</a>
-                <a href="#">Documentation</a>
-            </div>
-            <div class="footer-section">
-                <h4>Resources</h4>
-                <a href="#">GitHub</a>
-                <a href="#">Issues</a>
-                <a href="#">Discussions</a>
-                <a href="#">Changelog</a>
-            </div>
-            <div class="footer-section">
-                <h4>Company</h4>
-                <a href="#">About</a>
-                <a href="#">Blog</a>
-                <a href="#">Contact</a>
-                <a href="#">License</a>
-            </div>
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <a href="#">Privacy</a>
-                <a href="#">Terms</a>
-                <a href="#">Security</a>
-                <a href="#">Cookies</a>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Project-Sebas. Open source, MIT licensed.</p>
-            <p>Made with ❤️ for developers</p>
-        </div>
-    </footer>
 </body>
 </html>
